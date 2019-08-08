@@ -32,7 +32,7 @@ public class FileLayer
       try {
          DataOutputStream doutput = new DataOutputStream(output);
          ArrayList<Book> bookList = new ArrayList<Book>();
-         bookList.add(b1);
+         bookList.add(book);
 
          for (Book i : bookList) {
             System.out.println(i.getBookId());
