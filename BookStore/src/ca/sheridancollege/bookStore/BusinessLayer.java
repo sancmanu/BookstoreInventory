@@ -5,4 +5,14 @@ package ca.sheridancollege.bookStore;
 public class BusinessLayer 
 {
 
+    public void add(){
+        
+        
+        
+    }
+    
+    
+    
+    
+    
 }
