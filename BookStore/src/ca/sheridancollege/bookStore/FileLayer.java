@@ -1,24 +1,12 @@
 package ca.sheridancollege.bookStore;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 /**
  * @author Manuel Sanchez Moyano - Student ID 991545555
  */
 public class FileLayer
 {
-   private FileOutputStream output;
-
-   public FileLayer ()
-   {
-      try {
-         this.output = new FileOutputStream("file.dat");
-      }
-      catch (IOException e) {
-
-      }
-   }
+   private String fileName = "books.dat"; // "rootDirectory/filename"
 
    //Create a file
    public void createFile () throws IOException
@@ -27,36 +15,43 @@ public class FileLayer
    }
 
    //Write a file
-   public void writeFile (Book book)
+   public void writeFile (Book book) throws IOException
    {
-      try {
-         DataOutputStream doutput = new DataOutputStream(output);
+      //If Try-With-Resources is not used, output/input must use .close()
+      try (
+              DataOutputStream output
+              = new DataOutputStream(new FileOutputStream(fileName));) {
          ArrayList<Book> bookList = new ArrayList<Book>();
          bookList.add(book);
 
          for (Book i : bookList) {
-            System.out.println(i.getBookId());
-            doutput.write(i.getBookId());
+            i.getBookId();
+            output.write(i.getBookId());
+         }
+      }
+   }
+   //Read a file
+
+   public void readFile () throws IOException
+   {
+      try (
+              DataInputStream input = new DataInputStream(new FileInputStream(fileName));) {
+         int value;
+         while ((value = input.read()) != -1) {
+            System.out.println("data" + value);
          }
 
       }
-      catch (IOException e) {
-      }
-   }
-
-   //Read a file
-   public void readFile ()
-   {
-
    }
 
    //ToDo: delete
-   public static void main (String[] args) throws Exception
+   public static void main (String[] args) throws IOException
    {
       FileLayer fl = new FileLayer();
       Book b1 = new Book();
       b1.setBookId(1);
       fl.writeFile(b1);
+      fl.readFile();
    }
 
 }
