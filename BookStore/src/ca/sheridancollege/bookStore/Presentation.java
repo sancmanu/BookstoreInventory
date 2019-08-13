@@ -1,16 +1,17 @@
 package ca.sheridancollege.bookStore;
+import java.io.IOException;
 import java.util.ArrayList;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -19,171 +20,363 @@ import javafx.stage.Stage;
  */
 public class Presentation extends Application
 {
+   private ArrayList<Book> bookList;
+
+   //Right Pane
+   TextField bookTitleTextField = new TextField();
+   TextField bookEditionYearTextfield = new TextField();
+   TextField bookEditionTextField = new TextField();
+   TextField bookAuthorsNameTextField = new TextField();
+   TextField bookPublisherTextField = new TextField();
+   TextField bookISBNTextField = new TextField();
+   RadioButton bookTypePaperRadioButton = new RadioButton();
+   RadioButton bookTypeDigitalRadioButton = new RadioButton();
+   TextField bookDescriptionTextField = new TextField();
+   RadioButton bookLanguageEnglishRadioButton = new RadioButton();
+   RadioButton bookLanguageFrenchRadioButton = new RadioButton();
+
+   //Left Pane
+   ComboBox<String> bookGenreComboBox = new ComboBox<>();
+   ListView<String> bookNameListView = new ListView<>();
+
+   //Bottom Pane
+   Button bookAdd = new Button("Add");
+   Button bookEdit = new Button("Edit");
+   Button bookDelete = new Button("Delete");
+   Button bookSearch = new Button("Search");
+   Button bookEditSave = new Button("Save");
+
+   public Presentation ()
+   {
+      bookList = new ArrayList<>();
+      bookDelete.disableProperty().setValue(Boolean.TRUE);
+      bookEdit.disableProperty().setValue(Boolean.TRUE);
+      bookSearch.disableProperty().setValue(Boolean.TRUE);
+      setGenreCombo();
+      setBookListView();
+   }
+
    @Override
    public void start (Stage stage)
    {
-      GridPane gridPane = new GridPane();
-      GridPane leftPane = addLeftPanel();
-      GridPane rightPane = addRightPane();
-      GridPane bottomPane = addBottomPane();
+      GridPane mainPane = new GridPane();
+//      GridPane leftPane = addLeftPane();
+//      GridPane rightPane = addRightPane();
+//      GridPane bottomPane = addBottomPane();
 
-      gridPane.add(leftPane, 0, 0);
-      gridPane.add(rightPane, 1, 0);
-      gridPane.add(bottomPane, 1, 1);
+      mainPane.add(addLeftPane(), 0, 0);
+      mainPane.add(addRightPane(), 1, 0);
+      mainPane.add(addBottomPane(), 1, 1);
 
-      Scene scene = new Scene(gridPane);
-
+      //Create Scene.
+      Scene scene = new Scene(mainPane);
       stage.setTitle("BOOK INVENTORY");
       stage.setScene(scene);
       stage.show();
    }
 
-   private GridPane addBottomPane ()
+   private GridPane addLeftPane ()
    {
-      GridPane bottomPane = new GridPane();
-      bottomPane.setPadding(new Insets(10, 10, 20, 10));//Top, right, bottom, left
-      bottomPane.setVgap(10);
-      bottomPane.setHgap(5);
+      //left Pane
+      GridPane leftPane = new GridPane();
+      leftPane.setPadding(new Insets(10, 20, 20, 40));//Top, right, bottom, left
+      leftPane.setVgap(10);
 
-      Button bookAdd = new Button("Add");
-      bookAdd.setPrefSize(100, 20);
-      Button bookEdit = new Button("Edit");
-      bookEdit.setPrefSize(100, 20);
-      Button bookDelete = new Button("Delete");
-      bookDelete.setPrefSize(100, 20);
-      Button bookSearch = new Button("Search");
-      bookSearch.setPrefSize(100, 20);
-      Button programExit = new Button("Exit");
-      programExit.setPrefSize(100, 20);
+      //Label for book name list
+      Text bookNameLabel = new Text("List of Books");
 
-      bottomPane.add(bookAdd, 0, 0);
-      bottomPane.add(bookEdit, 1, 0);
-      bottomPane.add(bookDelete, 2, 0);
-      bottomPane.add(bookSearch, 0, 1);
-      bottomPane.add(programExit, 2, 1);
+      //list View for Book names
+      bookNameListView.setMaxHeight(400);
+      bookNameListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-      return bottomPane;
+      //leftPane.add(bookGenreLabel, 0, 0);
+      //leftPane.add(bookGenreComboBox, 0, 1);
+      leftPane.add(bookNameLabel, 0, 4);
+      leftPane.add(bookNameListView, 0, 5);
+
+      return leftPane;
    }
 
    private GridPane addRightPane ()
    {
       GridPane rightPane = new GridPane();
       rightPane.setPadding(new Insets(10, 20, 40, 40));//Top, right, bottom, left
-      rightPane.setVgap(10);
+      rightPane.setVgap(5);
       //rightPane.setStyle("-fx-background-color: #226699;");
 
       //book title
       Text bookTitleLabel = new Text("Book Title");
-      TextField bookTitleTextField = new TextField();
       bookTitleTextField.setPrefSize(300, 20);
-
-      //label for author name
-      Text bookAuthorNameLabel = new Text("Author Name");
-      //field for author name
-      TextField bookAuthorNameTextField = new TextField();
-
+      //Authors name
+      Text bookAuthorsNameLabel = new Text("Author Name");
       //edition year
       Text bookEditionYearLabel = new Text("Edition Year");
-      TextField bookEditionYearTextfield = new TextField();
+      //edition
+      Text bookEditionLabel = new Text("Edition");
+      //publisher
+      Text bookPublisherLabel = new Text("Publisher");
+      //label for Genre combo
+      Text bookGenreLabel = new Text("Genre");
 
       //ISBN
       Text bookISBNLabel = new Text("ISBN");
-      TextField bookISBNTextfield = new TextField();
-
       //BookType
       Text bookTypeLabel = new Text("Book Type");
       Text typePaperLabel = new Text("paper-book");
-      CheckBox bookTypePaper = new CheckBox();
-      bookTypePaper.setIndeterminate(false);
+      bookTypePaperRadioButton.setSelected(true);
       Text typeDigitalLabel = new Text("digital");
-      CheckBox bookTypeDigital = new CheckBox();
-      bookTypeDigital.setIndeterminate(false);
+      bookTypeDigitalRadioButton.setSelected(false);
 
-      //label for book description
+      //Description
       Text bookDescriptionLabel = new Text("Description");
-      //field for book description
-      TextField bookDescriptionField = new TextField();
-      //label for book written language
-      Text bookLanguageLabel = new Text("Language");
+      bookDescriptionTextField.setPrefSize(50, 50);
 
+      //Written language
+      Text bookLanguageLabel = new Text("Language");
       Text languageEnglishLabel = new Text("English");
       Text languageFrenchLabel = new Text("French");
 
-      //checkboxes for English language
-      CheckBox bookLanguageEnglishCheckBox = new CheckBox();
-      bookLanguageEnglishCheckBox.setIndeterminate(false);
-
-      //checkboxes for French language
-      CheckBox bookLanguageFrenchCheckBox = new CheckBox();
-      bookLanguageFrenchCheckBox.setIndeterminate(true);
+      //Book Language written
+      bookLanguageEnglishRadioButton.setSelected(true);
+      bookLanguageFrenchRadioButton.setSelected(false);
 
       //adding controls to pane
       rightPane.add(bookTitleLabel, 0, 1);
       rightPane.add(bookTitleTextField, 0, 2, 6, 1);//colNum, rowNum, colSpan, rowSpan
-      rightPane.add(bookAuthorNameLabel, 0, 3);
-      rightPane.add(bookAuthorNameTextField, 0, 4, 6, 1);
+      rightPane.add(bookAuthorsNameLabel, 0, 3);
+      rightPane.add(bookAuthorsNameTextField, 0, 4, 6, 1);
       rightPane.add(bookEditionYearLabel, 0, 5);
       rightPane.add(bookEditionYearTextfield, 0, 6, 6, 1);
-      rightPane.add(bookISBNLabel, 0, 7);
-      rightPane.add(bookISBNTextfield, 0, 8, 6, 1);
+      rightPane.add(bookEditionLabel, 0, 7);
+      rightPane.add(bookEditionTextField, 0, 8, 6, 1);
+      rightPane.add(bookPublisherLabel, 0, 9);
+      rightPane.add(bookPublisherTextField, 0, 10, 6, 1);
+      rightPane.add(bookGenreLabel, 0, 11);
+      rightPane.add(bookGenreComboBox, 0, 12, 4, 1);
 
-      rightPane.add(bookTypeLabel, 0, 9);
-      rightPane.add(typePaperLabel, 1, 9);
-      rightPane.add(bookTypePaper, 2, 9);
-      rightPane.add(typeDigitalLabel, 3, 9);
-      rightPane.add(bookTypeDigital, 4, 9);
+      rightPane.add(bookISBNLabel, 0, 13);//
+      rightPane.add(bookISBNTextField, 0, 14, 6, 1);
 
-      rightPane.add(bookDescriptionLabel, 0, 10);
-      rightPane.add(bookDescriptionField, 0, 11, 6, 2);
+      rightPane.add(bookTypeLabel, 0, 15);
+      rightPane.add(typePaperLabel, 2, 15);
+      rightPane.add(bookTypePaperRadioButton, 3, 15);
+      rightPane.add(typeDigitalLabel, 4, 15);
+      rightPane.add(bookTypeDigitalRadioButton, 5, 15);
 
-      rightPane.add(bookLanguageLabel, 0, 13);
-      rightPane.add(languageEnglishLabel, 1, 13);
-      rightPane.add(bookLanguageEnglishCheckBox, 2, 13);
-      rightPane.add(languageFrenchLabel, 3, 13);
-      rightPane.add(bookLanguageFrenchCheckBox, 4, 13);
+      rightPane.add(bookDescriptionLabel, 0, 17);
+      rightPane.add(bookDescriptionTextField, 0, 18, 6, 1);
+
+      rightPane.add(bookLanguageLabel, 0, 16);
+      rightPane.add(languageEnglishLabel, 2, 16);
+      rightPane.add(bookLanguageEnglishRadioButton, 3, 16);
+      rightPane.add(languageFrenchLabel, 4, 16);
+      rightPane.add(bookLanguageFrenchRadioButton, 5, 16);
 
       return rightPane;
    }
 
-   private GridPane addLeftPanel ()
+   private GridPane addBottomPane ()
    {
-      //left Pane
-      GridPane leftPane = new GridPane();
-      leftPane.setPadding(new Insets(40, 20, 20, 40));//Top, right, bottom, left
-      leftPane.setVgap(10);
+      GridPane bottomPane = new GridPane();
+      //Top, right, bottom, left
+      bottomPane.setPadding(new Insets(10, 10, 20, 10));
+      bottomPane.setVgap(10);
+      bottomPane.setHgap(5);
 
-      //label for Genre combo
-      Text bookGenreLabel = new Text("Genre");
+      bookAdd.setPrefSize(100, 20);
+      bookEdit.setPrefSize(100, 20);
+      bookDelete.setPrefSize(100, 20);
+      bookSearch.setPrefSize(100, 20);
+      bookEditSave.setPrefSize(100, 20);
 
-      //ChoiceBox for Genre
-      ChoiceBox<String> genreChoiceBox = new ChoiceBox<>();
-      ArrayList<String> genreList = new ArrayList<>();
+      bookAdd.setOnMouseClicked(e -> addBook());
+      bookEdit.setOnMouseClicked(e -> editBook());
+      bookDelete.setOnMouseClicked(e -> deleteBook());
+      bookEditSave.setOnMouseClicked(e -> editBookSave());
+      bookSearch.setOnMouseClicked(e -> openSearchWindow());
 
-      //ToDo: replace by binding
-      genreList.add("Choose an option");
-      genreList.add("Arts");
-      genreList.add("Business");
-      genreList.add("Cooking");
-      genreList.add("Education");
-      genreChoiceBox.getItems().addAll(genreList);
+      ToggleGroup typeBookGroup = new ToggleGroup();
+      bookTypePaperRadioButton.setToggleGroup(typeBookGroup);
+      bookTypeDigitalRadioButton.setToggleGroup(typeBookGroup);
+      ToggleGroup languageBookGroup = new ToggleGroup();
+      bookLanguageEnglishRadioButton.setToggleGroup(languageBookGroup);
+      bookLanguageFrenchRadioButton.setToggleGroup(languageBookGroup);
 
-      //Label for book name list
-      Text bookNameLabel = new Text("List of Books");
+      bottomPane.add(bookAdd, 0, 0);
+      bottomPane.add(bookEdit, 1, 0);
+      bottomPane.add(bookDelete, 2, 0);
+      bottomPane.add(bookSearch, 0, 1);
+      bottomPane.add(bookEditSave, 2, 1);
 
-      //list View for Book names
-      ObservableList<String> bookList = FXCollections.observableArrayList(
-              "Book1", "Book2", "Book3", "Book4", "Book5", "Book6", "Book7");
-      ListView<String> bookNameListView = new ListView<>(bookList);
-      bookNameListView.setMaxHeight(250);
-      leftPane.add(bookGenreLabel, 0, 0);
-      leftPane.add(genreChoiceBox, 0, 1);
-      leftPane.add(bookNameLabel, 0, 4);
-      leftPane.add(bookNameListView, 0, 5);
-      return leftPane;
+      return bottomPane;
    }
 
    public static void main (String[] args)
    {
       launch(args);
+   }
+
+   private void editBook ()
+   {
+      int bookId = bookNameListView.getSelectionModel().getSelectedIndex();
+      if (bookId > -1) {
+         String[] itemStr = bookNameListView.getSelectionModel().getSelectedItem().split("\\.");
+         BusinessLayer bl = new BusinessLayer();
+         Book result = bl.getBookById(Integer.parseInt(itemStr[0]));
+
+         System.out.println("Editing BookTitle "
+                 + bookNameListView.getSelectionModel().getSelectedItem());
+
+         bookTitleTextField.setText(result.getTitleName());
+         bookAuthorsNameTextField.setText(result.getAuthors() != null ? result.getAuthors() : "");
+         bookEditionYearTextfield.setText(result.getEdition());
+         bookEditionTextField.setText(result.getEdition());
+         bookPublisherTextField.setText(result.getPublisher());
+         setGenreCombo();
+         bookGenreComboBox.setValue(result.getGenre() != null ? result.getGenre() : "");
+         bookISBNTextField.setText(result.getISBN());
+         if (result.isPhysical()) {
+            bookTypePaperRadioButton.setSelected(true);
+         }
+         else {
+            bookTypeDigitalRadioButton.setSelected(true);
+         }
+         if ("English".equalsIgnoreCase(result.getLanguage())) {
+            bookLanguageEnglishRadioButton.setSelected(true);
+         }
+         else {
+            bookLanguageFrenchRadioButton.setSelected(true);
+         }
+         bookDescriptionTextField.setText(result.getDescription());
+
+         this.bookEdit.setDisable(true);
+         this.bookAdd.setDisable(true);
+         this.bookSearch.setDisable(true);
+
+      }
+   }
+
+   private void openSearchWindow ()
+   {
+
+
+//      //Create Scene.
+//      BorderPane searchWindow = new BorderPane();
+//
+//      TableView tableSearch
+//      
+//      Scene scene = new Scene(mainPane);
+//      stage.setTitle("BOOK INVENTORY");
+//      stage.setScene(scene);
+//      stage.show();
+   }
+
+   /*
+    * button Search
+    *
+    * if(bookTitleTextField.text != "")
+    * ArrayList<Book> bookList = BusinessLayer.SearchBooks(bookTitleTextfield.text, "bookTitle");
+    *
+    * else if (bookISBNTextfield.text != "")
+    * "bookISBN
+    * else if (bookAuthorsTextfield.Text .....)
+    * "bookAuthors"
+    *
+    */
+
+   private void addBook ()
+   {
+      Book book = new Book();
+      book.setTitleName(bookTitleTextField.getText());
+      book.setAuthors(bookAuthorsNameTextField.getText());
+      String editionYear = bookEditionYearTextfield.getText();
+      if (editionYear.isEmpty()) {
+         book.setEditionYear(0);
+      }
+      else {
+         book.setEdition(editionYear);
+      }
+
+      book.setGenre(bookGenreComboBox.getValue());
+      book.setISBN(bookISBNTextField.getText());
+
+      book.setPhysical(bookTypePaperRadioButton.isSelected());
+      book.setDescription(bookDescriptionTextField.getText());
+      book.setLanguage(bookLanguageEnglishRadioButton.isSelected() ? "English" : "French");
+
+      //bookList.add(book);
+      try {
+         BusinessLayer bl = new BusinessLayer();
+         bl.addBook(book);
+      }
+      catch (IOException ex) {
+         System.out.println(ex.getMessage());
+      }
+      setBookListView();
+
+      bookTitleTextField.setText("");
+      bookAuthorsNameTextField.setText("");
+      bookEditionYearTextfield.setText("");
+      bookEditionTextField.setText("");
+      bookPublisherTextField.setText("");
+      setGenreCombo();
+      bookISBNTextField.setText("");
+      bookTypePaperRadioButton.setSelected(true);
+      bookLanguageEnglishRadioButton.setSelected(true);
+      bookDescriptionTextField.setText("");
+
+   }
+
+   private void setBookListView ()
+   {
+      try {
+         bookNameListView.setItems(FXCollections.observableArrayList(new BusinessLayer().getBookNameList()));
+
+         boolean emptyList = bookNameListView.getItems().size() == 0;
+
+         bookDelete.disableProperty().setValue(emptyList);
+         bookEdit.disableProperty().setValue(emptyList);
+         bookSearch.disableProperty().setValue(emptyList);
+
+      }
+      catch (IOException ex) {
+
+      }
+   }
+
+   private void editBookSave ()
+   {
+
+   }
+
+   private void deleteBook ()
+   {
+      int bookId = bookNameListView.getSelectionModel().getSelectedIndex();
+      if (bookId > -1) {
+         String[] itemStr = bookNameListView.getSelectionModel().getSelectedItem().split("\\.");
+         BusinessLayer bl = new BusinessLayer();
+         bl.deleteBook(Integer.parseInt(itemStr[0]), true);
+         System.out.println("Deleted BookTitle "
+                 + bookNameListView.getSelectionModel().getSelectedItem());
+      }
+
+      setBookListView();
+   }
+
+   private void setGenreCombo ()
+   {
+      //ComboBox for Genre
+      ArrayList<String> genreList = new ArrayList<>();
+      genreList.add("Humor");
+      genreList.add("Science Fiction");
+      genreList.add("Crime");
+      genreList.add("Fantasy");
+      genreList.add("Fairy tale");
+      genreList.add("Contemporary");
+      genreList.add("Classic");
+      genreList.add("Horror");
+      genreList.add("Biography");
+      bookGenreComboBox.getItems().clear();
+      bookGenreComboBox.getItems().addAll(genreList);
    }
 }

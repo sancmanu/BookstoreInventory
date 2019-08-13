@@ -8,12 +8,12 @@ public class Book
    private String titleName;
    private int editionYear;
    private String edition;
-   private String author;
-   private String editor;
+   private String authors;
+   private String publisher;
    private String ISBN;
    private String genre;
    private String category;
-   private boolean type;
+   private boolean physical;
    private String description;
    private String language;
    private double price;
@@ -85,35 +85,35 @@ public class Book
    }
 
    /**
-    * @return the author
+    * @return the authors
     */
-   public String getAuthor ()
+   public String getAuthors ()
    {
-      return author;
+      return authors;
    }
 
    /**
-    * @param author the author to set
+    * @param authors the authors to set
     */
-   public void setAuthor (String author)
+   public void setAuthors (String authors)
    {
-      this.author = author;
+      this.authors = authors;
    }
 
    /**
-    * @return the editor
+    * @return the publisher
     */
-   public String getEditor ()
+   public String getPublisher ()
    {
-      return editor;
+      return publisher;
    }
 
    /**
-    * @param editor the editor to set
+    * @param publisher the publisher to set
     */
-   public void setEditor (String editor)
+   public void setPublisher (String publisher)
    {
-      this.editor = editor;
+      this.publisher = publisher;
    }
 
    /**
@@ -165,19 +165,19 @@ public class Book
    }
 
    /**
-    * @return the type
+    * @return the physical
     */
-   public boolean isType ()
+   public boolean isPhysical ()
    {
-      return type;
+      return physical;
    }
 
    /**
-    * @param type the type to set
+    * @param physical the type to set
     */
-   public void setType (boolean type)
+   public void setPhysical (boolean physical)
    {
-      this.type = type;
+      this.physical = physical;
    }
 
    /**
